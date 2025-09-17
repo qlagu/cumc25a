@@ -36,6 +36,16 @@
 *.exe
 *.out
 *.app
+out/build/
 
 # debug information files
 *.dwo
+
+# visual studio files
+.vs/
+*.vcxproj*
+*.user
+*.sdf
+*.opensdf
+*.cachefile
+
