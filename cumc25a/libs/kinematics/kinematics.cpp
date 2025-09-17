@@ -67,6 +67,7 @@ TimePoint Uav::getReleaseTime() const
 
 kinematics::Jamming::Jamming(const Uav& u, const TimePoint& _fuse_time) : 
 uav(u), fuse_time(_fuse_time)
-
 {}
+
+
 } // namespace kinematics

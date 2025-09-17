@@ -49,7 +49,8 @@ export class Jamming
 
     Vector3 positionAtTime(TimePoint t) const;
     bool isBomb(TimePoint t) const; // 在时间t时是否已经起爆
-    TimePoint timeToBomb() const;   // 距离起爆还剩多少时间
+    TimePoint getBombTime() const;          // 起爆时间
+    Duration timeToBomb(TimePoint t) const;   // 距离起爆还剩多少时间
     Vector3 positionAtBomb() const; // 起爆时的位置
 };
 
