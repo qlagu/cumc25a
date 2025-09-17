@@ -88,6 +88,53 @@ target_link_libraries(kinematics   PRIVATE
     Time
 )
 
+## basic库
+## export基础设施
+
+add_library(basic STATIC)
+
+target_sources(basic
+  PUBLIC
+    FILE_SET cxx_modules TYPE CXX_MODULES 
+    FILES
+      "libs/basic.ixx"
+)
+
+target_link_libraries(basic
+    PRIVATE
+     stdx
+     OriginData
+     Time
+     kinematics
+     Eigen3::Eigen
+)
+
+enable_import_std(basic)
+
+## occlusion库
+## 遮挡模型
+add_library(occlusion STATIC)
+
+target_sources(occlusion
+  PUBLIC
+    FILE_SET cxx_modules TYPE CXX_MODULES 
+    FILES
+      "libs/occlusion/occlusion.ixx"
+      "libs/occlusion/occlusion.base.ixx"
+      "libs/occlusion/occlusion.simple.ixx"
+      "libs/occlusion/occlusion.advance.ixx"
+
+   PRIVATE
+      "libs/occlusion/occlusion.simple.cpp"
+      "libs/occlusion/occlusion.advance.cpp"
+)
+
+target_link_libraries(occlusion   PRIVATE
+    basic
+)
+
+enable_import_std(occlusion)
+
 # 添加外部依赖
 include(FetchContent)
 

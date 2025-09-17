@@ -45,6 +45,7 @@ export module stdx;
 #include <utility>
 #include <variant>
 #include <vector>
+#include <cassert>
 
 #else
 
