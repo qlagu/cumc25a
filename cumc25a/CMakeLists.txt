@@ -42,6 +42,7 @@ enable_import_std(OriginData)
 target_link_libraries(OriginData   PRIVATE
     stdx
     Eigen3::Eigen
+    Time
 )
 
 ## Time库
@@ -62,7 +63,6 @@ enable_import_std(Time)
 
 target_link_libraries(Time   PRIVATE
     stdx
-    OriginData
 )
 
 ## kinematics库

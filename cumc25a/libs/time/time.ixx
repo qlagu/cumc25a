@@ -1,7 +1,8 @@
 export module Time;
 
-import OriginData;
 import stdx;
+
+export using Number  = double;
 
 export namespace Time
 {
@@ -55,14 +56,15 @@ export class TimePoint
     Duration since_epoch() const;
     Number   seconds() const;
 
-    // 比较
     bool operator==(const TimePoint&) const = default;
     auto operator<=>(const TimePoint&) const = default;
-};
+    TimePoint operator+(const Duration&);
+    TimePoint operator-(const Duration&);
 
-TimePoint operator+(TimePoint, Duration);
-TimePoint operator-(TimePoint, Duration);
-Duration  operator-(TimePoint, TimePoint);
+    Duration operator-(const TimePoint&);
+    void operator+=(const Duration&);
+    void operator-=(const Duration&);
+};
 
 // 左闭右开时间区间 [lo, hi)
 export class Interval

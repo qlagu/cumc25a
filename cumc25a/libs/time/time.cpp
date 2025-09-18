@@ -1,7 +1,6 @@
 module;
 module Time;
 
-import OriginData;
 import stdx;
 
 namespace Time
@@ -86,21 +85,30 @@ Number TimePoint::seconds() const
     return sec;
 }
 
-TimePoint operator+(TimePoint t, Duration d)
+TimePoint TimePoint::operator+(const Duration& d)
 {
-    return TimePoint{ t.since_epoch() + d };
+    return TimePoint{ since_epoch() + d };
 }
 
-TimePoint operator-(TimePoint t, Duration d)
+TimePoint TimePoint::operator-(const Duration& d)
 {
-    return TimePoint{ t.since_epoch() - d };
+    return TimePoint{ since_epoch() - d };
 }
 
-Duration operator-(TimePoint a, TimePoint b)
+Duration TimePoint::operator-(const TimePoint& b)
 {
-    return Duration{ a.since_epoch() - b.since_epoch() };
+    return Duration{ since_epoch() - b.since_epoch() };
 }
 
+void TimePoint::operator+=(const Duration& d)
+{
+    sec += d.seconds();
+}
+
+void TimePoint::operator-=(const Duration& d)
+{
+    sec -= d.seconds();
+}
 
 // Interval
 
@@ -125,7 +133,7 @@ Interval Interval::from(TimePoint start, Duration len)
 
 Duration Interval::length() const
 {
-    return hi - lo;
+    return hi.since_epoch() - lo.since_epoch();
 }
 
 bool Interval::empty() const

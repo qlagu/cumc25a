@@ -135,4 +135,14 @@ optional<Vector3> Cloud::centerAtTime(TimePoint t) const
                                  delta_t);
 }
 
+TimePoint Cloud::getCreateTime() const
+{
+    return jamming.getBombTime();
+}
+
+TimePoint Cloud::getDissipateTime() const
+{
+    return getCreateTime() + OriginData::cloud_life;
+}
+
 } // namespace Kinematics

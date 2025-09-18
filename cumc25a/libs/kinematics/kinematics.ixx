@@ -68,6 +68,8 @@ class Cloud
     bool isExist(TimePoint t) const;
     // 云雾中心在时间t时的位置
     optional<Vector3> centerAtTime(TimePoint t) const;
+    TimePoint getCreateTime() const;
+    TimePoint getDissipateTime() const;
 };
 
 } // namespace kinematics

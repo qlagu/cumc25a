@@ -25,6 +25,8 @@ int main()
     Duration total = union_total_length(intervals); // 默认 merge_adjacent=true
     std::cout << "Union total length = " << total.seconds() << " s\n";
 
+    //test for -
+    std::cout << "t0-t1 = " << (t0 - t1).seconds() << " s\n"; // -2.0 s
     // 期望输出：4.0 s
     // 解释：a ∪ b = [0.0, 3.5)（长度 3.5），再并上 c = [4.0, 4.5)（长度 0.5），总计 4.0。
 }

@@ -10,17 +10,18 @@ import basic;
 using namespace Kinematics;
 
 // 判断区间是否足够小（带尺度因子，避免精度问题）
-template <class T>
-inline bool close_interval(T lo, T hi, T eps)
+bool close_interval(TimePoint lo, TimePoint hi, Duration eps_abs) noexcept
 {
-    const T scale = std::max<T>(T(1), std::max(std::abs(lo), std::abs(hi)));
-    return std::abs(hi - lo) <= eps * scale;
+    if (hi < lo)
+        std::swap(lo, hi);
+    const Duration len = hi - lo;
+    return len <= eps_abs;
 }
 
 // 浮点数二分查找，寻找第一个满足 pred 的位置
-template <class T>
-T fbin_search_first_true(T lo, T hi, auto pred, T eps = T(1e-12),
-                         int max_iter = 2000)
+TimePoint fbin_search_first_true(TimePoint lo, TimePoint hi, auto pred,
+                                 Duration eps = Duration{ 1e-12 },
+                                 int max_iter = 2000)
 {
     if (hi < lo)
     {
@@ -34,8 +35,9 @@ T fbin_search_first_true(T lo, T hi, auto pred, T eps = T(1e-12),
     }
 
     for (int it = 0; it < max_iter && !close_interval(lo, hi, eps); ++it)
+
     {
-        T mid = std::midpoint(lo, hi);
+        TimePoint mid = lo + (hi - lo) / 2;
         if (pred(mid))
         {
             hi = mid; // 真 -> 收缩右边
@@ -58,11 +60,14 @@ pair<Interval, Interval> OcclusionModel<
     OcclusionModelType::Simple>::initialChangeIntervals() const
 {
     vector<Interval> occlusion_intervals;
-    Number up_side =
-        min(missile.landingTime().seconds(), OriginData::cloud_life);
+    TimePoint cloud_dissipate = cloud.getDissipateTime();
+
+    TimePoint up_side = min(missile.landingTime(), cloud_dissipate);
+
     bool last_time_point_occluded = isOccluded(TimePoint{ 0 });
-    for (Number t = initialFindDt.seconds(); t <= up_side;
-         t += initialFindDt.seconds()) // TODO
+
+    TimePoint t_start = TimePoint{ initialFindDt };
+    for (TimePoint t = t_start; t <= up_side; t += initialFindDt)
     {
         TimePoint tp{ t };
         bool occluded = isOccluded(tp);
@@ -129,26 +134,25 @@ bool OcclusionModel<OcclusionModelType::Simple>::isOccluded(TimePoint t) const
     // 到最近点的距离（用平方避免 sqrt）
     Number d2 = (cloud_center - nearest).squaredNorm();
 
-    //fmt::println("[Func: isOccluded]");
-    //fmt::println("[t:{}]", t.seconds());
-    //fmt::println("[cloud_exist:{}]", cloud.isExist(t));
-    //fmt::println("[center_opt:{}]", center_opt.has_value());
-    //fmt::println("[target_pos:{}]", fmt::join(target_pos, ", "));
-    //fmt::println("[missile_pos:{}]", fmt::join(missile_pos, ", "));
-    //fmt::println("[cloud_center:{}]", fmt::join(cloud_center, ", "));
-    //fmt::println("[cloud_radius:{}]", R);
-    //fmt::println("[sight_line_vec:{}]", fmt::join(sight_line_vec, ", "));
-    //fmt::println("[sight_line_len:{}]", sight_line_len);
-    //fmt::println("[v_hat:{}]", fmt::join(v_hat, ", "));
-    //fmt::println("[u:{}]", fmt::join(u, ", "));
-    //fmt::println("[tparam:{}]", tparam);
-    //fmt::println("[tclamp:{}]", tclamp);
-    //fmt::println("[nearest:{}]", fmt::join(nearest, ", "));
-    //fmt::println("[d2:{}]", d2);
+    // fmt::println("[Func: isOccluded]");
+    // fmt::println("[t:{}]", t.seconds());
+    // fmt::println("[cloud_exist:{}]", cloud.isExist(t));
+    // fmt::println("[center_opt:{}]", center_opt.has_value());
+    // fmt::println("[target_pos:{}]", fmt::join(target_pos, ", "));
+    // fmt::println("[missile_pos:{}]", fmt::join(missile_pos, ", "));
+    // fmt::println("[cloud_center:{}]", fmt::join(cloud_center, ", "));
+    // fmt::println("[cloud_radius:{}]", R);
+    // fmt::println("[sight_line_vec:{}]", fmt::join(sight_line_vec, ", "));
+    // fmt::println("[sight_line_len:{}]", sight_line_len);
+    // fmt::println("[v_hat:{}]", fmt::join(v_hat, ", "));
+    // fmt::println("[u:{}]", fmt::join(u, ", "));
+    // fmt::println("[tparam:{}]", tparam);
+    // fmt::println("[tclamp:{}]", tclamp);
+    // fmt::println("[nearest:{}]", fmt::join(nearest, ", "));
+    // fmt::println("[d2:{}]", d2);
 
     return d2 <= R * R;
 }
-
 
 Interval OcclusionModel<OcclusionModelType::Simple>::occlusionInterval(
     Duration dt) const
@@ -159,21 +163,21 @@ Interval OcclusionModel<OcclusionModelType::Simple>::occlusionInterval(
         return Interval{};
     }
 
-    auto start = fbin_search_first_true(toSearch.first.getLo().seconds(),
-                                        toSearch.first.getHi().seconds(),
-                                        [this](Number t)
-                                        {
-                                            // 第一次（不遮挡->遮挡），找第一个遮挡时刻
-                                            return isOccluded(TimePoint{ t });
-                                        });
+    auto start =
+        fbin_search_first_true(toSearch.first.getLo(), toSearch.first.getHi(),
+                               [this](TimePoint t)
+                               {
+                                   // 第一次（不遮挡->遮挡），找第一个遮挡时刻
+                                   return isOccluded(t);
+                               });
 
-    auto end = fbin_search_first_true(toSearch.second.getLo().seconds(),
-                                      toSearch.second.getHi().seconds(),
-                                      [this](Number t)
-                                      {
-                                          // 第二次（遮挡->不遮挡），找第一个不遮挡时刻
-                                          return !isOccluded(TimePoint{ t });
-                                      });
+    auto end =
+        fbin_search_first_true(toSearch.second.getLo(), toSearch.second.getHi(),
+                               [this](TimePoint t)
+                               {
+                                   // 第二次（遮挡->不遮挡），找第一个不遮挡时刻
+                                   return !isOccluded(t);
+                               });
 
     return Interval{ TimePoint{ start }, TimePoint{ end } };
 }
