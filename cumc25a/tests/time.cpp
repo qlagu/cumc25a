@@ -2,6 +2,7 @@
 import stdx;
 using namespace std::chrono_literals;
 import Time;
+import Kinematics;
 
 using namespace Time;
 using namespace std;

@@ -116,21 +116,24 @@ enable_import_std(basic)
 add_library(occlusion STATIC)
 
 target_sources(occlusion
-  PUBLIC
-    FILE_SET cxx_modules TYPE CXX_MODULES 
-    FILES
-      "libs/occlusion/occlusion.ixx"
-      "libs/occlusion/occlusion.base.ixx"
-      "libs/occlusion/occlusion.simple.ixx"
-      "libs/occlusion/occlusion.advance.ixx"
-
-   PRIVATE
-      "libs/occlusion/occlusion.simple.cpp"
-      "libs/occlusion/occlusion.advance.cpp"
+    PUBLIC
+        FILE_SET cxx_modules TYPE CXX_MODULES 
+        FILES
+        "libs/occlusion/occlusion.ixx"
+        "libs/occlusion/occlusion.base.ixx"
+        "libs/occlusion/occlusion.simple.ixx"
+        "libs/occlusion/occlusion.advance.ixx"
+    PRIVATE
+        FILE_SET cxx_modules_private TYPE CXX_MODULES
+        FILES
+        "libs/occlusion/occlusion.simple.cpp"
+        "libs/occlusion/occlusion.advance.cpp"
 )
+
 
 target_link_libraries(occlusion   PRIVATE
     basic
+    fmt::fmt
 )
 
 enable_import_std(occlusion)
@@ -184,9 +187,23 @@ target_link_libraries(test_time   PRIVATE
     fmt::fmt
     Eigen3::Eigen
     Time
+    kinematics
 )
 
 enable_import_std(test_time)
+
+add_executable(test_occlusion_simple
+    "tests/occlusion.simple.cpp"
+)
+
+target_link_libraries(test_occlusion_simple   PRIVATE
+    basic
+    occlusion
+    fmt::fmt
+    Eigen3::Eigen
+)
+
+enable_import_std(test_occlusion_simple)
 
 #set_target_properties(cumc25a PROPERTIES
 #  CXX_STANDARD 23

@@ -101,6 +101,7 @@ Duration operator-(TimePoint a, TimePoint b)
     return Duration{ a.since_epoch() - b.since_epoch() };
 }
 
+
 // Interval
 
 Interval::Interval() : lo(TimePoint{ 0 }), hi(TimePoint{ 0 }) {}

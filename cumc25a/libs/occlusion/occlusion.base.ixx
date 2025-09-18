@@ -1,6 +1,6 @@
 export module occlusion:base;
 
-enum class OcclusionModelType
+export enum class OcclusionModelType
 {
 	Simple,
     Advanced

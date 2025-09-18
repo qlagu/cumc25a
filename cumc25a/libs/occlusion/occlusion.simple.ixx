@@ -1,5 +1,7 @@
+module;
 export module occlusion:simple;
-export import :base;
+
+import :base;
 import basic;
 
 using namespace Kinematics;

@@ -30,7 +30,7 @@ Kinematics::Missile::Missile(const MissilePosition& pos) : position(pos) {}
 Vector3 Missile::getMissileVelocity() const
 {
     Vector3 v = position;
-    v = v.normalized() * OriginData::missile_speed;
+    v = -v.normalized() * OriginData::missile_speed;
     return v;
 }
 
