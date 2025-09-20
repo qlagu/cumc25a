@@ -27,16 +27,14 @@ enable_import_std(stdx)
 
 ## OriginData库
 ## 记录原始数据
-add_library(OriginData STATIC
-   libs/OriginData.ixx
-)
+add_library(OriginData STATIC)
 
 target_sources(OriginData
   PUBLIC
     FILE_SET cxx_modules TYPE CXX_MODULES FILES
-      libs/OriginData.ixx
+      "libs/OriginData/OriginData.ixx"
   PRIVATE 
-     libs/OriginData.cpp
+     "libs/OriginData/OriginData.cpp"
 )
 
 enable_import_std(OriginData)
@@ -141,6 +139,25 @@ target_link_libraries(occlusion   PRIVATE
 )
 
 enable_import_std(occlusion)
+
+## PSO库
+## 粒子群优化算法
+
+add_library(PSO STATIC)
+
+target_sources(PSO
+    PUBLIC
+        FILE_SET cxx_modules TYPE CXX_MODULES 
+        FILES
+            "pso/pso.ixx"
+)
+
+target_link_libraries(PSO 
+    PUBLIC
+        basic
+        Eigen3::Eigen
+        fmt::fmt
+)
 
 # 添加外部依赖
 include(FetchContent)

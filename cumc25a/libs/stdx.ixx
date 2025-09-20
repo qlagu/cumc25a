@@ -21,6 +21,7 @@ export module stdx;
 #include <iostream>
 #include <limits>
 #include <list>
+#include <cstdint> // 添加此行以定义 uint64_t
 #include <map>
 #include <memory>
 #include <mutex>
@@ -46,6 +47,7 @@ export module stdx;
 #include <variant>
 #include <vector>
 #include <cassert>
+#include <cstddef>
 
 #else
 
