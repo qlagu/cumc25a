@@ -35,14 +35,17 @@ target_sources(OriginData
   PUBLIC
     FILE_SET cxx_modules TYPE CXX_MODULES FILES
       libs/OriginData.ixx
+  PRIVATE 
+     libs/OriginData.cpp
 )
 
 enable_import_std(OriginData)
 
-target_link_libraries(OriginData   PRIVATE
-    stdx
+target_link_libraries(OriginData   
+PUBLIC
     Eigen3::Eigen
     Time
+    stdx
 )
 
 ## Time库
@@ -61,7 +64,8 @@ target_sources(Time
 
 enable_import_std(Time)
 
-target_link_libraries(Time   PRIVATE
+target_link_libraries(Time   
+PUBLIC
     stdx
 )
 
@@ -174,6 +178,7 @@ target_link_libraries(cumc25a   PRIVATE
     stdx
     fmt::fmt
     Eigen3::Eigen
+    OriginData
 )
 
 enable_import_std(cumc25a)
@@ -182,7 +187,7 @@ add_executable(test_time
     "tests/time.cpp"
 )
 
-target_link_libraries(test_time   PRIVATE
+target_link_libraries(test_time   PUBLIC
     stdx
     fmt::fmt
     Eigen3::Eigen

@@ -3,8 +3,8 @@ module;
 #include <Eigen/Dense>
 
 export module OriginData;
-import Time;
-
+export import Time;
+//using Number = double;
 // 预留，可能要改为可记录计算时精度损失的数据类型
 export using Vector3 = Eigen::Matrix<Number, 3, 1>;
 
@@ -139,6 +139,8 @@ export inline constexpr const Number jamming_interval = 1; // 每架无人机投
 export inline const Vector3          gravity{0, 0, -9.81}; // 重力加速度
 
 export inline constexpr const Number cloud_radius = 10;        // 云雾半径
-export inline const Time::Duration cloud_life{20.0};   // 云雾持续时间
+export inline extern const Time::Duration cloud_life;   // 云雾持续时间
+//export inline Time::Duration cloud_life();
+
 export inline const Vector3          cloud_velocity{0, 0, -3}; // 云雾速度
 }; // namespace OriginData
